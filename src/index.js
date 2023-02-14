@@ -61,7 +61,7 @@ const renderAll = (dataSet) => {
 
 // renderOne(0, 3, paths1, solution);
 // renderOne(0, 3, paths2, solution);
-renderOne(0, 8, paths3, solution);
+// renderOne(0, 8, paths3, solution);
 
 // renderAll([
 //   [0, 3, paths1, solution],
