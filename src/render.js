@@ -6,12 +6,12 @@ export const renderAllGraphs = (selector, allData) => {
   const height = +svg.attr("height");
 
   const steps = allData.length + 1;
-  console.log("steps", steps);
+  // console.log("steps", steps);
   const stepH = height / steps;
-  console.log("stepH", stepH);
+  // console.log("stepH", stepH);
   const stepW = width / steps;
-  console.log("stepW", stepW);
-  console.log(Math.random() * (stepH * 2));
+  // console.log("stepW", stepW);
+  // console.log(Math.random() * (stepH * 2));
 
   allData.forEach((graphData, i) => {
     const g = svg

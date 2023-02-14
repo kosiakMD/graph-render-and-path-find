@@ -31168,12 +31168,13 @@ var renderAllGraphs = function renderAllGraphs(selector, allData) {
   var width = +svg.attr("width");
   var height = +svg.attr("height");
   var steps = allData.length + 1;
-  console.log("steps", steps);
+  // console.log("steps", steps);
   var stepH = height / steps;
-  console.log("stepH", stepH);
+  // console.log("stepH", stepH);
   var stepW = width / steps;
-  console.log("stepW", stepW);
-  console.log(Math.random() * (stepH * 2));
+  // console.log("stepW", stepW);
+  // console.log(Math.random() * (stepH * 2));
+
   allData.forEach(function (graphData, i) {
     var g = svg.append("g").attr("transform", "translate(".concat(stepW * (i + 1), ", ").concat(stepH * (i + 1), ")"));
     renderGraph.apply(void 0, [g].concat(_toConsumableArray(graphData)));
