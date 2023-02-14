@@ -1,27 +1,40 @@
 import * as d3 from "d3";
 
-// const width = 700;
-// const height = 500;
+export const renderAllGraphs = (selector, allData) => {
+  const svg = d3.select(selector);
+  const width = +svg.attr("width");
+  const height = +svg.attr("height");
 
-export async function render(selector, nodes, links, highlightedLinks) {
-  // Create a new force simulation
-  // const simulation = d3
-  //   .forceSimulation()
-  //   .force(
-  //     "link",
-  //     d3.forceLink().id((d) => d.id)
-  //   )
-  //   .force("charge", d3.forceManyBody())
-  //   .force("center", d3.forceCenter());
+  const steps = allData.length + 1;
+  console.log("steps", steps);
+  const stepH = height / steps;
+  console.log("stepH", stepH);
+  const stepW = width / steps;
+  console.log("stepW", stepW);
+  console.log(Math.random() * (stepH * 2));
 
+  allData.forEach((graphData, i) => {
+    const g = svg
+      .append("g")
+      .attr("transform", `translate(${stepW * (i + 1)}, ${stepH * (i + 1)})`);
+    renderGraph(g, ...graphData);
+  });
+};
+
+export function renderGraph(selector, nodes, links, highlightedLinks) {
   // Create the svg element
-  // var svg = d3.select(selector);
-  var svg = d3.select(selector),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
-  console.log("width", width);
-  console.log("height", height);
-
+  let svg;
+  let cntr = [];
+  if (typeof selector === "string") {
+    svg = d3.select(selector);
+    var width = +svg.attr("width");
+    var height = +svg.attr("height");
+    cntr = [width / 2, height / 2];
+  } else {
+    svg = selector;
+    cntr = [0, 0];
+  }
+  // Create a new force simulation
   var simulation = d3
     .forceSimulation(nodes)
     .force(
@@ -32,22 +45,24 @@ export async function render(selector, nodes, links, highlightedLinks) {
       "path",
       d3.forceLink(highlightedLinks).id((d) => d.id)
     )
-    .force("charge", d3.forceManyBody().strength(-3000))
-    .force("center", d3.forceCenter(width / 2, height / 2));
+    // .force("radial", d3.forceRadial(500, width / 2, height / 2))
+    // .force("charge", d3.forceManyBody().strength(-1000))
+    // .force("center", d3.forceCenter(width / 2, height / 2));
+    // .force("radial", d3.forceRadial(500, width / 2, height / 2))
+    .force("charge", d3.forceManyBody().strength(-2000).distanceMin(20))
+    // .force("charge", d3.forceManyBody())
+    // .force("radial", d3.forceRadial(200, width / 2, height / 2).strength(10))
+    .force("collide", d3.forceCollide().radius(30))
+    .force("center", d3.forceCenter(...cntr));
+  // .force("x", d3.forceX().strength(-0.1))
+  // .force("y", d3.forceY().strength(-0.1));
+  // .force(
+  //   "collision",
+  //   d3.forceCollide().radius(function (d) {
+  //     return d.radius;
+  //   })
+  // );
 
-  // Define the arrow marker
-  // svg
-  //   .append("defs")
-  //   .append("arrowhead")
-  //   .attr("id", "arrow")
-  //   .attr("viewBox", "0 -5 10 10")
-  //   .attr("refX", 20)
-  //   .attr("refY", 0)
-  //   .attr("markerWidth", 20)
-  //   .attr("markerHeight", 20)
-  //   .attr("orient", "auto")
-  //   .append("path")
-  //   .attr("d", "M0,-5L10,0L0,5");
   svg
     .append("defs")
     .append("marker")
@@ -62,6 +77,15 @@ export async function render(selector, nodes, links, highlightedLinks) {
     .attr("d", "M 0,0 V 4 L6,2 Z")
     .attr("class", "marker");
 
+  const arrowhead = d3.select("#arrowhead");
+  // console.log("arrowhead", arrowhead.node());
+  const arrow = arrowhead
+    .clone(true)
+    .attr("id", "arrow")
+    .attr("refX", "3%")
+    .style("fill", "red");
+  // console.log("arrow", arrow.node());
+
   const checkSelected = (d) => {
     return (
       highlightedLinks &&
@@ -69,15 +93,6 @@ export async function render(selector, nodes, links, highlightedLinks) {
       highlightedLinks.find((x) => x.target === d.target.id)
     );
   };
-
-  // var link = svg
-  //   .append("g")
-  //   .attr("class", "links")
-  //   .selectAll("line")
-  //   .data(links)
-  //   .enter()
-  //   .append("line")
-  //   .attr("stroke-width", 2);
   // Add the links to the simulation
   var link = svg
     .append("g")
@@ -90,18 +105,18 @@ export async function render(selector, nodes, links, highlightedLinks) {
   // .style("stroke", (d) => (checkSelected(d) ? "red" : "black"))
   // .style("stroke-width", (d) => (checkSelected(d) ? "2px" : "1px"));
 
-  var path = svg
+  var way = svg
     .append("g")
-    .attr("class", "path")
+    .attr("class", "way")
     // if (highlightedLinks.length) {
-    // path
+    // way
     .selectAll("line")
     .data(highlightedLinks)
     .enter()
     .append("line")
     .style("stroke", "red")
-    .style("stroke-width", "1.5px")
-    .attr("marker-end", "url(#arrowhead)");
+    .style("stroke-width", "1px")
+    .attr("marker-end", "url(#arrow)");
   // }
 
   // Add the nodes to the simulation
@@ -136,9 +151,9 @@ export async function render(selector, nodes, links, highlightedLinks) {
 
   // node.append("title").text((d) => d.id);
 
-  console.log("nodes", nodes);
-  console.log("links", links);
-  console.log("highlightedLinks", highlightedLinks);
+  // console.log("nodes", nodes);
+  // console.log("links", links);
+  // console.log("highlightedLinks", highlightedLinks);
   // Start the simulation
   // simulation.nodes(nodes).on("tick", ticked);
   // simulation.force("link").links(links);
@@ -154,7 +169,7 @@ export async function render(selector, nodes, links, highlightedLinks) {
         .attr("y2", (d) => d.target.y - 0);
 
       if (highlightedLinks.length) {
-        path
+        way
           .attr("x1", (d) => d.source.x - 0)
           .attr("y1", (d) => d.source.y - 0)
           .attr("x2", (d) => d.target.x - 0)
