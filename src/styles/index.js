@@ -87,8 +87,8 @@ const graph = {
     { source: 1, target: 3, value: 3 },
     { source: 2, target: 3, value: 1 },
     { source: 3, target: 4, value: 3 },
-    { source: 4, target: 5, value: 4 }
-  ]
+    { source: 4, target: 5, value: 4 },
+  ],
 };
 // const { path, distances } = dijkstra(graph, 0, 5);
 // console.log(`Shortest path: ${path}`);
@@ -103,8 +103,8 @@ export const solution = (start, end, map) => {
     if (startNode === endNode) {
       allPaths.push([...path]);
     } else {
-      console.log("map", map);
-      console.log("startNode", startNode);
+      // console.log("map", map);
+      // console.log("startNode", startNode);
       const nodePaths = map[startNode];
       // console.log("nodePaths of", startNode, 'get', nodePaths);
       for (let i = 0; i < nodePaths.length; i++) {
